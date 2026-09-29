@@ -1,0 +1,23 @@
+author: HealthRisk AI Team
+ethical_considerations:
+- Not intended for direct clinical diagnosis without human oversight
+generated_date: '2026-09-29T17:24:03.200160'
+intended_use_cases:
+- Risk stratification
+- Portfolio optimization
+- Clinical decision support
+limitations:
+- Requires structured EHR data for optimal performance
+metadata:
+  hyperparameters:
+    version: 1.0.0
+  model_config: {}
+  training_data: MIMIC-IV, ClinicalTrials.gov, openFDA (synthetic/mocked for testing)
+  training_date: '2026-09-29T17:24:03.199401'
+model_name: Hospital Credit Scorecard
+model_type: Healthcare AI
+out_of_scope_use_cases:
+- Individual diagnosis
+- Treatment recommendation
+performance_metrics: {}
+version: 1.0.0

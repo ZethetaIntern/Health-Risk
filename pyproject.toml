@@ -71,13 +71,15 @@ healthrisk-api = "models.cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = [
-    "data*",
-    "models*",
-    "financial*",
-    "simulation*",
-    "explainability*",
-    "src*",
-    "configs*",
+    "src.healthrisk_ai*",
+    "src.insurance*",
+    "src.models*",
+    "src.simulation*",
+    "src.explainability*",
+    "src.credit_risk*",
+    "src.pharma*",
+    "src.acquisition*",
+    "src.processing*",
 ]
 
 [tool.ruff]
@@ -106,11 +108,11 @@ exclude = ["build", "dist", "htmlcov", "__pycache__", "tests"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["."]
-addopts = "--cov=. --cov-report=term-missing --cov-report=html --cov-fail-under=60 -q"
+pythonpath = ["src", "."]
+addopts = "--cov=healthrisk_ai --cov-report=term-missing --cov-report=html --cov-fail-under=60 -q"
 
 [tool.coverage.run]
-source = ["."]
+source = ["src/healthrisk_ai", "src/insurance", "src/models", "src/simulation", "src/explainability", "src/credit_risk", "src/pharma", "src/acquisition", "src/processing"]
 branch = true
 omit = [
     "tests/*",
@@ -118,6 +120,7 @@ omit = [
     "docs/*",
     "reports/*",
     "setup.py",
+    "**/__pycache__/*",
 ]
 
 [tool.coverage.report]
