@@ -13,7 +13,7 @@
 | Task ID | Component Module | Implementation Specification | Target Benchmark / Standard | Status | Metric / Validation Result |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **INF-01** | Repository & MLOps | Initialized git, docker-compose.yml, DVC, and MLflow logging | Docker build succeeds without errors | [x] Completed | Git initialized on main, pyproject.toml, docker-compose.yml, Dockerfile, DVC, .gitignore, and LICENSE created |
-| **INF-02** | CI/CD Pipeline | `.github/workflows/ci-cd.yml` running linting (ruff), mypy, pytest | Green status on main branch commits | [ ] Pending | Awaiting execution |
+| **INF-02** | CI/CD Pipeline | `.github/workflows/ci-cd.yml` running linting (ruff), mypy, pytest | Green status on main branch commits | [x] Completed | Automated workflow configured with Python 3.10 & 3.11 matrix, linting, type checks, and coverage gates |
 | **DAT-01** | Data Acquisition | REST API fetchers for openFDA, ClinicalTrials.gov, WHO GHO, CDC WONDER | Automated ingestion to `data/raw/` | [ ] Pending | Awaiting execution |
 | **DAT-02** | Feature Engineering | ICD-10 hierarchy, CMS-HCC risk calculator, lab slopes, DRG/CMI indices | Modular pipeline in `data/features/` | [ ] Pending | Awaiting execution |
 | **MOD-01** | Clinical NLP | ClinicalBERT/PubMedBERT fine-tuning, NER pipeline, note complexity scoring | Macro AUROC > 0.80, NER F1 > 0.70 | [ ] Pending | Awaiting execution |
