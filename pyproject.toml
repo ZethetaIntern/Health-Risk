@@ -1,0 +1,132 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "healthrisk-ai"
+version = "1.0.0"
+description = "Dual-Domain HealthRisk AI & Gamified HealthRisk Lab Simulation Engine"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+authors = [
+    {name = "SleepySum", email = "bhoisumit322s@gmail.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Healthcare Industry",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Office/Business :: Financial :: Investment",
+]
+
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyarrow>=14.0",
+    "scipy>=1.10",
+    "lifelines>=0.27",
+    "xgboost>=2.0",
+    "lightgbm>=4.0",
+    "scikit-learn>=1.3",
+    "torch>=2.0",
+    "torch-geometric>=2.4",
+    "transformers>=4.34",
+    "sentencepiece>=0.1.99",
+    "shap>=0.44",
+    "pyyaml>=6.0",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+    "httpx>=0.25",
+    "tenacity>=8.2",
+    "rich>=13.0",
+    "streamlit>=1.28",
+    "plotly>=5.17",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "hypothesis>=6.88",
+    "ruff>=0.3",
+    "mypy>=1.8",
+    "pre-commit>=3.5",
+    "sphinx>=7.0",
+    "sphinx-rtd-theme>=2.0",
+]
+mlops = [
+    "mlflow>=2.10",
+    "dvc>=3.40",
+]
+
+[project.scripts]
+healthrisk-sim = "simulation.cli:main"
+healthrisk-api = "models.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+    "data*",
+    "models*",
+    "financial*",
+    "simulation*",
+    "explainability*",
+    "src*",
+    "configs*",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+    "build",
+    "dist",
+    "htmlcov",
+    "__pycache__",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "C4", "SIM"]
+ignore = ["E501", "B008", "C408"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = ["build", "dist", "htmlcov", "__pycache__", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--cov=. --cov-report=term-missing --cov-report=html --cov-fail-under=60 -q"
+
+[tool.coverage.run]
+source = ["."]
+branch = true
+omit = [
+    "tests/*",
+    "notebooks/*",
+    "docs/*",
+    "reports/*",
+    "setup.py",
+]
+
+[tool.coverage.report]
+fail_under = 60
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+]

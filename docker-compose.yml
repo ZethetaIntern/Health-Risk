@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  healthrisk-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: healthrisk-simulation-app
+    ports:
+      - "8501:8501"
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    volumes:
+      - ./configs:/app/configs:ro
+      - ./data/resources:/app/data/resources:ro
+    restart: unless-stopped
+    depends_on:
+      - mlflow
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.10.2
+    container_name: healthrisk-mlflow
+    ports:
+      - "5000:5000"
+    command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlartifacts --host 0.0.0.0 --port 5000
+    volumes:
+      - mlflow-data:/mlflow
+      - mlflow-artifacts:/mlartifacts
+    restart: unless-stopped
+
+volumes:
+  mlflow-data:
+  mlflow-artifacts:

@@ -1,0 +1,18 @@
+stages:
+  acquisition:
+    cmd: python -m data.acquisition.cli --all
+    deps:
+      - configs/config.yaml
+      - data/acquisition/
+    outs:
+      - data/raw/metadata.json:
+          persist: true
+  features:
+    cmd: python -m data.features.cli --all
+    deps:
+      - configs/config.yaml
+      - data/features/
+      - data/raw/metadata.json
+    outs:
+      - data/cache/feature_manifest.json:
+          persist: true

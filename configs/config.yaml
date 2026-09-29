@@ -1,0 +1,148 @@
+default_seed: 20260914
+
+paths:
+  data_root: "./data"
+  raw_data_root: "./data/raw"
+  cache_root: "./data/cache"
+  models_root: "./models"
+  artifacts_root: "./models/artifacts"
+  reports_root: "./reports"
+  docs_root: "./docs"
+
+  # MIMIC-IV local extract path; falls back to synthetic mock if unset in .env
+  mimic_ingest_path: "${MIMIC_INGEST_PATH:-}"
+
+  # REST API endpoints
+  openfda_api: "https://api.fda.gov/device/enforcement.json"
+  clinicaltrials_api: "https://clinicaltrials.gov/api/v2/studies"
+  who_gho_api: "https://ghoapi.azureedge.net/api"
+  cdc_wonder_api: "https://wonder.cdc.gov/controller/datarequest"
+
+mlflow:
+  tracking_uri: "${MLFLOW_TRACKING_URI:-http://localhost:5000}"
+  experiment_name: "healthrisk-ai-evaluation"
+  log_models: true
+
+dvc:
+  remote_url: "${DVC_REMOTE_URL:-s3://healthrisk-ai-dvc/data}"
+
+retry:
+  max_attempts: 5
+  base_backoff_seconds: 1.0
+  max_backoff_seconds: 32.0
+  rate_limit_per_second: 2.0
+
+acquisition:
+  mimic:
+    mock_num_patients: 2000
+    event_date_range:
+      start: "2010-01-01"
+      end: "2022-12-31"
+
+  openfda:
+    adverse_event_start: "2017-01-01"
+    adverse_event_end: "2026-01-01"
+    max_results_per_request: 100
+
+  clinicaltrials:
+    search_terms:
+      - "cardiovascular"
+      - "oncology"
+      - "diabetes"
+    max_studies: 500
+
+  who_gho:
+    indicators:
+      - "WHOSIS_000001" # Life expectancy at birth
+      - "NCD_GLUC_0403" # Raised blood glucose
+      - "WHS4_100"      # U5MR
+    target_years: [2015, 2019, 2022]
+
+  cdc_wonder:
+    datasets:
+      - "underlying_cause_of_death"
+      - "chronic_conditions"
+
+features:
+  clinical:
+    comorbidity_resource_path: ""
+    elixhauser_resource_path: ""
+    compute_comorbidity_indices: true
+    compute_polypharmacy_score: true
+    compute_lab_trajectories: true
+    lab_window_days: 365
+    polypharmacy_threshold: 5
+
+  financial:
+    compute_cash_metrics: true
+    compute_claim_triangles: true
+    compute_cmi_signals: true
+    compute_drg_metrics: true
+    triangle_approach_years: 10
+
+models:
+  nlp:
+    model_name: "emilyalsentzer/Bio_ClinicalBERT"
+    embedding_dim: 64
+    max_seq_length: 512
+    device: "auto"
+    target_macro_auroc: 0.80
+    target_ner_f1: 0.70
+
+  graph:
+    model_name: "gatv2_hetero"
+    patient_embedding_dim: 32
+    num_heads: 4
+    dropout: 0.2
+    target_mortality_auroc: 0.78
+    target_readmission_auroc: 0.72
+
+  survival:
+    deep_surv_hidden: [128, 64, 32]
+    cindex_target: 0.70
+    use_deepdeephit: true
+
+  tabular:
+    selection_threshold: 0.01
+    time_series_split_folds: 5
+    xgboost_objective: "reg:tweedie"
+    tweedie_variance_power: 1.5
+
+  ensemble:
+    meta_learner: "ridge"
+    stack_target_r2: 0.25
+    time_aware_splits: 5
+
+financial:
+  actuarial:
+    individual_mape_target: 0.15
+    cohort_mape_target: 0.05
+    ibnr_methods: ["chain_ladder", "bornhuetter_ferguson"]
+  credit_risk:
+    target_gini: 0.50
+    target_ks: 0.30
+    default_definition_days: 90
+  pharma:
+    target_sharpe: 1.00
+    mc_iterations: 10000
+    discount_rate: 0.09
+
+simulation:
+  initial_capital: 500_000_000
+  quarters: 40
+  game_modes:
+    - "actuarial_pricing"
+    - "hospital_credit"
+    - "pharma_alpha"
+    - "integrated_master"
+  asset_universe:
+    - insurance
+    - hospital_bonds
+    - pharma_equities
+    - credit_facilities
+  shock:
+    yearly_burn_rate_pct: 0.05
+    epidemiologic_shock_prob_per_quarter: 0.15
+    fda_warning_prob_per_quarter: 0.05
+    cms_rate_cut_prob_per_quarter: 0.10
+    merger_event_prob_per_quarter: 0.08
